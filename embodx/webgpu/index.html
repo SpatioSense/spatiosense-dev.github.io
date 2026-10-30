@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>SpatioSense 3D Viewer</title>
+  <script>window.__EMBODX_STANDALONE__ = true;</script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+      background: #020617;
+    }
+
+    body {
+      /* Keep Bevy's parent inside the visible browser area, including on phones.
+         In an iframe these viewport units follow the host-provided frame size. */
+      height: 100vh;
+      height: 100dvh;
+      box-sizing: border-box;
+      padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+        env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    }
+
+    #spatiosense-embodx-root {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #020617;
+    }
+
+    #spatiosense-embodx-canvas {
+      display: block;
+      outline: none;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .attribution {
+      position:fixed; bottom:8px; left:10px; font-size:12px;
+      color:rgba(255,255,255,0.7); background:rgba(0,0,0,0.4);
+      padding:4px 6px; border-radius:4px; z-index:1000; pointer-events:none;
+    }
+    .attribution a { color:rgba(255,255,255,0.85); text-decoration:none; pointer-events:auto; }
+    .attribution a:hover { text-decoration:underline; }
+  </style>
+
+  
+  
+  
+  <!-- Isolated default data codec. No Bevy runtime is linked into this worker. -->
+  
+  
+  
+  
+  <!-- data-bin="embodx" -->
+  
+<script type="module">
+async function __trunkInitializer(init, source, sourceSize, initializer, initWithObject) {
+  if (initializer === undefined) {
+    return await init(initWithObject ? { module_or_path: source } : source);
+  }
+
+  const {
+    onStart, onProgress, onComplete, onSuccess, onFailure
+  } = initializer;
+
+  onStart?.();
+
+  const response = fetch(source)
+      .then((response) => {
+        const reader = response.body.getReader();
+        const headers = response.headers;
+        const status = response.status;
+        const statusText = response.statusText;
+
+        const total = sourceSize;
+        let current = 0;
+
+        const stream = new ReadableStream({
+          start(controller) {
+            function push() {
+              reader.read().then(({done, value}) => {
+                if (done) {
+                  onProgress?.({current: total, total});
+                  controller.close();
+                  return;
+                }
+
+                current += value.byteLength;
+                onProgress?.({current, total});
+                controller.enqueue(value);
+                push();
+              });
+            }
+
+            push();
+          },
+        });
+
+        return {
+          stream, init: {
+            headers, status, statusText
+          }
+        };
+      })
+      .then(({stream, init}) =>
+          new Response(stream, init),
+      );
+
+  return init(initWithObject ? { module_or_path: response } : response)
+      .then((value) => {
+        onComplete?.();
+        onSuccess?.(value);
+        return value;
+      }, (reason) => {
+        onComplete?.();
+        onFailure?.(reason);
+        return reason;
+      });
+}
+
+
+import init, * as bindings from './embodx-cfdadec248598e99.js';
+import initializer from './d7bd822a27e98f56-initializer.mjs';
+
+const wasm = await __trunkInitializer(init, './embodx-cfdadec248598e99_bg.wasm', 37508849, initializer(), true);
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<meta name="embodx-lto" content="thin">
+<link rel="modulepreload" href="./embodx-cfdadec248598e99.js" crossorigin="anonymous" integrity="sha384-aDuF0yt4OqJBlCfa0eu9QqtdGmn53/VhyYAXwLolio4pKS5TTkKyITq15aJad7Et"><link rel="modulepreload" href="./snippets/embodx-36cc021a88c3ee36/src/browser_menu.mjs" crossorigin="anonymous" integrity="sha384-9hV6sKCyi7hJZojROqBLAAwu6mnMyELlbS6tBxKju3r8pvS6jQGJm/t8fVkVKnmv"><link rel="modulepreload" href="./snippets/dimensify_splat-be4e370ac245af31/src/streaming/runtime/codec_jobs.mjs" crossorigin="anonymous" integrity="sha384-Xmze0ozXkSFGJhQoUZBr3KDyIbO3hFW8sMTTuY/8W1L9xuVLrHLDmp8EdmBJe6B7"><link rel="modulepreload" href="./snippets/spatiosense_widgets-2a7736543fc3aa32/src/widget/text_input/browser.mjs" crossorigin="anonymous" integrity="sha384-t0nsEzk1o8r9ZwZ/egkdrWnsEZSc/vHjtBlQOv9Y2loFxo4Ocvy7YSv6k6xfhG3+"><link rel="modulepreload" href="./snippets/bevy_gaussian_splatting-6cf776f7255c5542/src/render/webgl/sort_jobs.mjs" crossorigin="anonymous" integrity="sha384-b4zY0vkXeqxFyM2HiQRF067PhgxbOaFXm2oKk32p5Et4UEwqRFmnLqi7wYwpXiT0"><link rel="modulepreload" href="./d7bd822a27e98f56-initializer.mjs" crossorigin="anonymous" integrity="sha384-mlAyDCj8HjXE4pwiovALhH33TNb1DjGTWGr6QiDMzp7fE+OKUbMKJM/G6zAbohTX"><link rel="preload" href="./embodx-cfdadec248598e99_bg.wasm" crossorigin="anonymous" integrity="sha384-9Vng9gZ54ellAygiv8Khf3sDPpMEv0pn4nZsHBW4NaB6AZO0KkQLwveVGcE/K23G" as="fetch" type="application/wasm"></head>
+
+<body>
+  <script>
+    window.__EMBODX_CANVAS_SELECTOR__ ??= "#spatiosense-embodx-canvas";
+    document.addEventListener("contextmenu", (e) => {
+      if (e.target instanceof HTMLCanvasElement) {
+        e.preventDefault();
+      }
+    });
+  </script>
+  <div id="spatiosense-embodx-root">
+    <canvas id="spatiosense-embodx-canvas"></canvas>
+  </div>
+</body>
+</html>
