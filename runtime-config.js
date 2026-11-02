@@ -1,1 +1,1 @@
-window.__SPATIOSENSE_CONFIG__ = {"apiOrigin":"https://spatiosense-api-staging-980444799836.australia-southeast1.run.app","collaborationOrigin":"https://embodx-collaboration-staging-980444799836.australia-southeast1.run.app","assetRoot":"https://storage.googleapis.com/spatiosense/sites"};
+window.__SPATIOSENSE_CONFIG__ = {"apiOrigin":"https://api-dev.spatiosense.ai","collaborationOrigin":"https://embodx-collaboration-staging-980444799836.australia-southeast1.run.app","assetRoot":"https://storage.googleapis.com/spatiosense/sites"};
